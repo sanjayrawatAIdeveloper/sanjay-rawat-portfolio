@@ -43,3 +43,30 @@ refreshThemeIcon();themeButton.addEventListener('click',refreshThemeIcon);
 const menuIcon=iconSvg('<path d="M4 6h16M4 12h16M4 18h16"/>'),closeIcon=iconSvg('<path d="m6 6 12 12M18 6 6 18"/>');
 function refreshMenuIcon(){menu.innerHTML=menu.getAttribute('aria-expanded')==='true'?closeIcon:menuIcon}refreshMenuIcon();new MutationObserver(refreshMenuIcon).observe(menu,{attributes:true,attributeFilter:['aria-expanded']});
 dialog.querySelector('.close').innerHTML=closeIcon;
+
+
+// Local illustrative demo: no API calls or website scanning.
+(() => {
+ const rules = {
+  colour: {title:'Colour mismatch', expected:'#2563EB', found:'#F97316', explanation:'The primary button uses a colour outside the sample brand palette.'},
+  type: {title:'Typography mismatch', expected:'Manrope', found:'Georgia', explanation:'The sample heading uses a serif font instead of the specified brand typeface.'},
+  spacing: {title:'Spacing mismatch', expected:'28px', found:'8px', explanation:'The content inset is smaller than the sample spacing rule.'}
+ };
+ const sample=document.getElementById('lens-sample'), correction=document.getElementById('lens-correct');
+ let selected='colour', corrected=false;
+ function render(){
+  const rule=rules[selected];
+  sample.dataset.rule=selected;sample.classList.toggle('is-corrected',corrected);
+  document.getElementById('lens-result-title').textContent=corrected?'Correction preview':rule.title;
+  document.getElementById('lens-expected').textContent=rule.expected;
+  document.getElementById('lens-found-label').textContent=corrected?'Preview':'Found';
+  document.getElementById('lens-found').textContent=corrected?rule.expected:rule.found;
+  document.getElementById('lens-explanation').textContent=corrected?'The sample now matches this rule. Other rules have not been evaluated.':rule.explanation;
+  correction.textContent=corrected?'Show original':'Preview correction';
+  correction.setAttribute('aria-pressed',String(corrected));
+  document.querySelectorAll('[data-lens-rule]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.lensRule===selected)));
+ }
+ document.querySelectorAll('[data-lens-rule]').forEach(button=>button.addEventListener('click',()=>{selected=button.dataset.lensRule;corrected=false;render()}));
+ correction.addEventListener('click',()=>{corrected=!corrected;render()});
+ render();
+})();
