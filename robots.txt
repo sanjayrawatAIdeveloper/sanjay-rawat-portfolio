@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://sanjay-rawat-portfolio.sanjayrawat.chatgpt.site/sitemap.xml
